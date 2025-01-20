@@ -29,6 +29,7 @@ STATCMD="stat_-f_%Sp %5l %6u %6g %12z %m %N"
 SORTCMD="sort_-z"
 DIRS="/etc"
 EXTRA_FILES=""
+ID=""
 
 # Choose commands based on kernel name and some other things for Linux
 case "`uname`" in
