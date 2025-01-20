@@ -35,16 +35,27 @@ case "`uname`" in
 	Linux)
 		STATCMD="stat_-c_%A %5h %6u %6g %12s %Y %n"
 		# Keep a list of installed packages
-		if [ -e /etc/debian_version ]; then
-			COLUMNS=160 dpkg -l > 00PACKAGES
-		elif [ -e /etc/redhat-release ]; then
-			rpm -qa | sort > 00PACKAGES
-		elif [ -e /etc/alpine-release ]; then
-			apk -vv info | sort > 00PACKAGES
-		else
-			echo >&2 "Unknown Linux dist"
-			exit 1
+		if [ -e /etc/os-release ]; then
+			. /etc/os-release
 		fi
+		case "${ID}" in
+			debian|ubuntu)
+				COLUMNS=160 dpkg -l > 00PACKAGES
+				;;
+			rhel)
+				rpm -qa | sort > 00PACKAGES
+				;;
+			alpine)
+				apk -vv info | sort > 00PACKAGES
+				;;
+			void)
+				xbps-query -l | cut -d' ' -f2 > 00PACKAGES
+				;;
+			*)
+				echo >&2 "Unknown Linux dist"
+				exit 1
+				;;
+		esac
 		;;
 	FreeBSD)
 		# Keep a list of installed packages
