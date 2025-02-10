@@ -42,8 +42,19 @@ case "`uname`" in
 		elif [ -e /etc/alpine-release ]; then
 			apk -vv info | sort > 00PACKAGES
 		else
-			echo >&2 "Unknown Linux dist"
-			exit 1
+			ID=""
+			if [ -e /etc/os-release ]; then
+				. /etc/os-release
+			fi
+			case "${ID}" in
+				void)
+					xbps-query -l | cut -d' ' -f2 > 00PACKAGES
+					;;
+				*)
+					echo >&2 "Unknown Linux dist"
+					exit 1
+					;;
+			esac
 		fi
 		;;
 	FreeBSD)
